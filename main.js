@@ -14,7 +14,7 @@ const CONFIG = {
     plantDecayTimeMin: 8000, // Minimum time to scale down to 0 (8 seconds - SLOW decay)
     plantDecayTimeMax: 10000, // Maximum time to scale down to 0 (10 seconds - SLOW decay)
     cameraWobbleAmount: 0.3,
-    maxPlants: 12 // Reduced to 25% of previous (50 -> 12)
+    maxPlants: 100 // Increased to allow plants to complete full lifecycle (~28-38s)
 };
 
 // Scene setup
