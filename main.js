@@ -7,8 +7,8 @@ const CONFIG = {
     blobSpeed: 0.015,
     pathScale: 3200, // 128x larger (2x from previous)
     plantSpawnInterval: 24, // Reduced density by 25% to prevent flickering
-    plantGrowTimeMin: 2500, // Minimum growth time with variation
-    plantGrowTimeMax: 3500, // Maximum growth time with variation
+    plantGrowTimeMin: 5000, // Minimum growth time (5 seconds with 20% variation)
+    plantGrowTimeMax: 8000, // Maximum growth time (8 seconds with 20% variation)
     plantStableTimeMin: 15000, // Minimum time at full scale (15 seconds) - HOLD at 100%
     plantStableTimeMax: 20000, // Maximum time at full scale (20 seconds) - HOLD at 100%
     plantDecayTimeMin: 8000, // Minimum time to scale down to 0 (8 seconds - SLOW decay)
