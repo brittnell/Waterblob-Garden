@@ -6,14 +6,14 @@ const CONFIG = {
     blobSize: 204.8, // 256x larger than original (2x from previous)
     blobSpeed: 0.015,
     pathScale: 3200, // 128x larger (2x from previous)
-    plantSpawnRate: 2, // Number of plants to spawn per second (time-based)
+    plantSpawnRate: 3, // Plants spawned per second (adjust this to control density)
     plantGrowTimeMin: 5000, // Minimum growth time (5 seconds with 20% variation)
     plantGrowTimeMax: 8000, // Maximum growth time (8 seconds with 20% variation)
     plantStableTimeMin: 15000, // Minimum time at full scale (15 seconds) - HOLD at 100%
     plantStableTimeMax: 20000, // Maximum time at full scale (20 seconds) - HOLD at 100%
     plantDecayTimeMin: 8000, // Minimum time to scale down to 0 (8 seconds - SLOW decay)
     plantDecayTimeMax: 10000, // Maximum time to scale down to 0 (10 seconds - SLOW decay)
-    plantSpawnRandomness: 100, // Random offset range for plant spawn positions (increased to reduce z-fighting)
+    plantSpawnRandomness: 200, // Random offset range for plant spawn positions (±100 units)
     plantMaxScaleMin: 0.8, // Minimum max scale (80% of full size)
     plantMaxScaleMax: 1.0, // Maximum max scale (100% of full size)
     cameraWobbleAmount: 0.3
