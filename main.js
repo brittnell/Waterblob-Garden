@@ -11,8 +11,8 @@ const CONFIG = {
     plantGrowTimeMax: 3500, // Maximum growth time with variation
     plantStableTimeMin: 15000, // Minimum time at full scale (15 seconds)
     plantStableTimeMax: 20000, // Maximum time at full scale (20 seconds)
-    plantDecayTimeMin: 8000, // Minimum time to scale down to 0 with variation
-    plantDecayTimeMax: 12000, // Maximum time to scale down to 0 with variation
+    plantDecayTimeMin: 4000, // Minimum time to scale down to 0 (4 seconds, 20% below 5s)
+    plantDecayTimeMax: 6000, // Maximum time to scale down to 0 (6 seconds, 20% above 5s)
     cameraWobbleAmount: 0.3,
     maxPlants: 200
 };
@@ -171,6 +171,7 @@ class WaterBlob {
 }
 
 // Plant types with fantastical colors
+// NOTE: Currently testing with only one type to debug flickering issue
 const PLANT_TYPES = [
     {
         name: 'Spiral Bloom',
@@ -205,8 +206,9 @@ const PLANT_TYPES = [
             }
             return group;
         }
-    },
-    {
+    }
+    /* COMMENTED OUT FOR DEBUGGING FLICKERING - ADD BACK ONE BY ONE
+    ,{
         name: 'Crystal Frond',
         colors: { base: 0x00ffff, tip: 0x8844ff }, // Cyan/Violet
         build: () => {
@@ -370,6 +372,7 @@ const PLANT_TYPES = [
             return group;
         }
     }
+    */
 ];
 
 // Plant management
