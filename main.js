@@ -11,10 +11,10 @@ const CONFIG = {
     plantGrowTimeMax: 3500, // Maximum growth time with variation
     plantStableTimeMin: 15000, // Minimum time at full scale (15 seconds)
     plantStableTimeMax: 20000, // Maximum time at full scale (20 seconds)
-    plantDecayTimeMin: 4000, // Minimum time to scale down to 0 (4 seconds, 20% below 5s)
-    plantDecayTimeMax: 6000, // Maximum time to scale down to 0 (6 seconds, 20% above 5s)
+    plantDecayTimeMin: 10000, // Minimum time to scale down to 0 (10 seconds - SLOWER decay)
+    plantDecayTimeMax: 15000, // Maximum time to scale down to 0 (15 seconds - SLOWER decay)
     cameraWobbleAmount: 0.3,
-    maxPlants: 200
+    maxPlants: 50 // Reduced to 25% of previous (200 -> 50)
 };
 
 // Scene setup
