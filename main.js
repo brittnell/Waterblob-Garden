@@ -13,6 +13,7 @@ const CONFIG = {
     plantStableTimeMax: 20000, // Maximum time at full scale (20 seconds) - HOLD at 100%
     plantDecayTimeMin: 8000, // Minimum time to scale down to 0 (8 seconds - SLOW decay)
     plantDecayTimeMax: 10000, // Maximum time to scale down to 0 (10 seconds - SLOW decay)
+    plantSpawnRandomness: 40, // Random offset range for plant spawn positions (spread out the trail)
     cameraWobbleAmount: 0.3
 };
 
@@ -206,9 +207,8 @@ const PLANT_TYPES = [
             }
             return group;
         }
-    }
-    /* COMMENTED OUT FOR DEBUGGING FLICKERING - ADD BACK ONE BY ONE
-    ,{
+    },
+    {
         name: 'Crystal Frond',
         colors: { base: 0x00ffff, tip: 0x8844ff }, // Cyan/Violet
         build: () => {
@@ -239,7 +239,9 @@ const PLANT_TYPES = [
             }
             return group;
         }
-    },
+    }
+    /* COMMENTED OUT - ADD BACK ONE BY ONE TO TEST
+    ,{
     {
         name: 'Bubble Cluster',
         colors: { base: 0xff00ff, tip: 0x00ffaa }, // Magenta/Turquoise
@@ -461,8 +463,17 @@ class Plant {
 
 function spawnPlant(position) {
     // No maxPlants constraint - plants naturally remove themselves when lifecycle completes
+
+    // Add random offset to spread plants out along the trail
+    const randomOffset = new THREE.Vector3(
+        (Math.random() - 0.5) * CONFIG.plantSpawnRandomness,
+        (Math.random() - 0.5) * CONFIG.plantSpawnRandomness,
+        (Math.random() - 0.5) * CONFIG.plantSpawnRandomness
+    );
+    const spawnPosition = position.clone().add(randomOffset);
+
     const plantType = PLANT_TYPES[Math.floor(Math.random() * PLANT_TYPES.length)];
-    const plant = new Plant(position, plantType);
+    const plant = new Plant(spawnPosition, plantType);
     plants.push(plant);
 }
 
