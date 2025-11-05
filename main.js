@@ -35,46 +35,93 @@ document.getElementById('canvas-container').appendChild(renderer.domElement);
 const targetCameraRotation = { x: 0, y: 0 };
 const currentCameraRotation = { x: 0, y: 0 };
 
-// Detect if device is mobile/touch-enabled
-const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-    || (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
+let gyroActive = false;
+let mouseActive = false;
 
-if (isMobile) {
-    // Use gyroscope/device orientation for mobile
-    window.addEventListener('deviceorientation', (event) => {
-        // event.beta is front-to-back tilt (-180 to 180)
-        // event.gamma is left-to-right tilt (-90 to 90)
-        const beta = event.beta || 0;  // X axis (front/back)
-        const gamma = event.gamma || 0; // Y axis (left/right)
-
-        // Normalize and apply to camera rotation
-        targetCameraRotation.x = (beta / 180) * CONFIG.cameraWobbleAmount;
-        targetCameraRotation.y = (gamma / 90) * CONFIG.cameraWobbleAmount;
-    });
-
-    // Request permission for iOS 13+
-    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-        // Show a button or info message for iOS users
-        console.log('Tap screen to enable gyroscope camera movement');
-        document.addEventListener('click', () => {
-            DeviceOrientationEvent.requestPermission()
-                .then(permissionState => {
-                    if (permissionState === 'granted') {
-                        console.log('Gyroscope permission granted');
-                    }
-                })
-                .catch(console.error);
-        }, { once: true });
-    }
-} else {
-    // Use mouse for desktop
-    document.addEventListener('mousemove', (event) => {
+// Always set up mouse as fallback
+document.addEventListener('mousemove', (event) => {
+    if (!gyroActive) {
+        mouseActive = true;
         const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
         const mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
 
         targetCameraRotation.y = mouseX * CONFIG.cameraWobbleAmount;
         targetCameraRotation.x = mouseY * CONFIG.cameraWobbleAmount;
-    });
+    }
+});
+
+// Try to set up gyroscope (works if available, regardless of device type)
+function enableGyro() {
+    console.log('Attempting to enable gyroscope...');
+
+    window.addEventListener('deviceorientation', (event) => {
+        // Check if we're actually getting orientation data
+        if (event.alpha !== null || event.beta !== null || event.gamma !== null) {
+            if (!gyroActive) {
+                gyroActive = true;
+                mouseActive = false;
+                console.log('✓ Gyroscope active! Tilt device to control camera.');
+                updateInfoText('Gyroscope active - tilt device to control camera');
+            }
+
+            const beta = event.beta || 0;  // X axis (front/back tilt: -180 to 180)
+            const gamma = event.gamma || 0; // Y axis (left/right tilt: -90 to 90)
+
+            // Normalize and apply to camera rotation
+            targetCameraRotation.x = (beta / 180) * CONFIG.cameraWobbleAmount;
+            targetCameraRotation.y = (gamma / 90) * CONFIG.cameraWobbleAmount;
+        }
+    }, true);
+}
+
+// Helper to update info text
+function updateInfoText(text) {
+    const infoDiv = document.getElementById('info');
+    if (infoDiv) {
+        infoDiv.textContent = text;
+        setTimeout(() => {
+            infoDiv.style.opacity = '0';
+        }, 3000);
+    }
+}
+
+// Check if device has DeviceOrientationEvent
+if (typeof DeviceOrientationEvent !== 'undefined') {
+    console.log('DeviceOrientationEvent is available');
+
+    // iOS 13+ requires permission
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        console.log('iOS detected - tap screen to grant gyro permission');
+        updateInfoText('Tap screen to enable gyroscope');
+        document.addEventListener('click', () => {
+            DeviceOrientationEvent.requestPermission()
+                .then(permissionState => {
+                    console.log('Permission state:', permissionState);
+                    if (permissionState === 'granted') {
+                        enableGyro();
+                    }
+                })
+                .catch(err => console.error('Permission error:', err));
+        }, { once: true });
+    } else {
+        // Android, Firefox, or older iOS - try enabling directly
+        console.log('Non-iOS device - enabling gyro directly');
+        enableGyro();
+
+        // Show message after a moment if gyro didn't activate
+        setTimeout(() => {
+            if (!gyroActive && !mouseActive) {
+                console.log('Gyroscope not detected. Using mouse control.');
+                updateInfoText('Move mouse to control camera');
+            } else if (mouseActive) {
+                console.log('Using mouse control');
+                updateInfoText('Move mouse to control camera');
+            }
+        }, 2000);
+    }
+} else {
+    console.log('DeviceOrientationEvent not available - using mouse only');
+    updateInfoText('Move mouse to control camera');
 }
 
 // Lighting
