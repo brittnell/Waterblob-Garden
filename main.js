@@ -13,8 +13,7 @@ const CONFIG = {
     plantStableTimeMax: 20000, // Maximum time at full scale (20 seconds) - HOLD at 100%
     plantDecayTimeMin: 8000, // Minimum time to scale down to 0 (8 seconds - SLOW decay)
     plantDecayTimeMax: 10000, // Maximum time to scale down to 0 (10 seconds - SLOW decay)
-    cameraWobbleAmount: 0.3,
-    maxPlants: 100 // Increased to allow plants to complete full lifecycle (~28-38s)
+    cameraWobbleAmount: 0.3
 };
 
 // Scene setup
@@ -461,11 +460,7 @@ class Plant {
 }
 
 function spawnPlant(position) {
-    if (plants.length >= CONFIG.maxPlants) {
-        const oldPlant = plants.shift();
-        oldPlant.destroy();
-    }
-
+    // No maxPlants constraint - plants naturally remove themselves when lifecycle completes
     const plantType = PLANT_TYPES[Math.floor(Math.random() * PLANT_TYPES.length)];
     const plant = new Plant(position, plantType);
     plants.push(plant);
