@@ -66,10 +66,37 @@ class WaterBlob {
         const positions = geometry.attributes.position.array;
         this.originalPositions = new Float32Array(positions);
 
+        // Add subtle vertex color variation for watery appearance
+        const colors = [];
+        const color1 = new THREE.Color(0x66ccff); // Lighter blue (top/highlights)
+        const color2 = new THREE.Color(0x2288dd); // Medium blue
+        const color3 = new THREE.Color(0x1166cc); // Deeper blue (bottom/shadows)
+
+        for (let i = 0; i < positions.length; i += 3) {
+            const y = positions[i + 1]; // Get y position
+            const normalizedY = (y / CONFIG.blobSize + 1) / 2; // Normalize to 0-1
+
+            // Create gradient from lighter at top to darker at bottom
+            let color;
+            if (normalizedY > 0.5) {
+                // Top half: blend from medium to light
+                const t = (normalizedY - 0.5) * 2;
+                color = new THREE.Color().lerpColors(color2, color1, t);
+            } else {
+                // Bottom half: blend from deep to medium
+                const t = normalizedY * 2;
+                color = new THREE.Color().lerpColors(color3, color2, t);
+            }
+
+            colors.push(color.r, color.g, color.b);
+        }
+
+        geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
         const material = new THREE.MeshPhongMaterial({
-            color: 0x3399ff,
+            vertexColors: true, // Enable vertex colors for watery gradient
             transparent: true,
-            opacity: 0.75, // More translucent for gradient effect
+            opacity: 0.75,
             shininess: 120,
             specular: 0xaaddff,
             reflectivity: 0.8,
@@ -245,9 +272,7 @@ const PLANT_TYPES = [
             }
             return group;
         }
-    }
-    /* COMMENTED OUT - ADD BACK ONE BY ONE TO TEST
-    ,{
+    },
     {
         name: 'Bubble Cluster',
         colors: { base: 0xff00ff, tip: 0x00ffaa }, // Magenta/Turquoise
@@ -266,7 +291,7 @@ const PLANT_TYPES = [
                         gradientPos
                     ),
                     transparent: true,
-                    opacity: 0.8,
+                    opacity: 0.75,
                     shininess: 100,
                     emissive: new THREE.Color().lerpColors(
                         new THREE.Color(0xff00ff),
@@ -310,6 +335,8 @@ const PLANT_TYPES = [
                 shininess: 70,
                 emissive: 0xff0066, // Hot pink emissive
                 emissiveIntensity: 0.4,
+                transparent: true,
+                opacity: 0.75,
                 vertexColors: false
             });
             const tendril = new THREE.Mesh(geometry, material);
@@ -343,7 +370,9 @@ const PLANT_TYPES = [
                 color: 0x7FFFD4, // Changed to aquamarine #7FFFD4
                 shininess: 90,
                 emissive: 0x7FFFD4,
-                emissiveIntensity: 0.3
+                emissiveIntensity: 0.3,
+                transparent: true,
+                opacity: 0.75
             });
             const center = new THREE.Mesh(centerGeometry, centerMaterial);
             center.position.y = 96.0; // 192x larger (4x from previous)
@@ -366,7 +395,9 @@ const PLANT_TYPES = [
                         new THREE.Color(0xff00ff),
                         gradientPos
                     ),
-                    emissiveIntensity: 0.25
+                    emissiveIntensity: 0.25,
+                    transparent: true,
+                    opacity: 0.75
                 });
                 const spike = new THREE.Mesh(geometry, material);
                 const phi = Math.acos(-1 + (2 * i) / numSpikes);
@@ -380,7 +411,6 @@ const PLANT_TYPES = [
             return group;
         }
     }
-    */
 ];
 
 // Plant management
