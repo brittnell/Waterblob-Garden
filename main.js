@@ -3,7 +3,7 @@ import * as THREE from 'three';
 // Configuration
 const CONFIG = {
     backgroundColor: 0x000000,
-    blobSize: 204.8, // 256x larger than original (2x from previous)
+    blobSize: 307.2, // 1.5x larger (was 204.8, increased by 50%)
     blobSpeed: 0.015,
     pathScale: 3200, // 128x larger (2x from previous)
     plantSpawnRate: 8, // Plants spawned per second (adjust this to control density)
@@ -31,18 +31,51 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-// Mouse tracking for camera wobble
-const mouse = { x: 0, y: 0 };
+// Device motion tracking for camera wobble
 const targetCameraRotation = { x: 0, y: 0 };
 const currentCameraRotation = { x: 0, y: 0 };
 
-document.addEventListener('mousemove', (event) => {
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+// Detect if device is mobile/touch-enabled
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    || (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
 
-    targetCameraRotation.y = mouse.x * CONFIG.cameraWobbleAmount;
-    targetCameraRotation.x = mouse.y * CONFIG.cameraWobbleAmount;
-});
+if (isMobile) {
+    // Use gyroscope/device orientation for mobile
+    window.addEventListener('deviceorientation', (event) => {
+        // event.beta is front-to-back tilt (-180 to 180)
+        // event.gamma is left-to-right tilt (-90 to 90)
+        const beta = event.beta || 0;  // X axis (front/back)
+        const gamma = event.gamma || 0; // Y axis (left/right)
+
+        // Normalize and apply to camera rotation
+        targetCameraRotation.x = (beta / 180) * CONFIG.cameraWobbleAmount;
+        targetCameraRotation.y = (gamma / 90) * CONFIG.cameraWobbleAmount;
+    });
+
+    // Request permission for iOS 13+
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        // Show a button or info message for iOS users
+        console.log('Tap screen to enable gyroscope camera movement');
+        document.addEventListener('click', () => {
+            DeviceOrientationEvent.requestPermission()
+                .then(permissionState => {
+                    if (permissionState === 'granted') {
+                        console.log('Gyroscope permission granted');
+                    }
+                })
+                .catch(console.error);
+        }, { once: true });
+    }
+} else {
+    // Use mouse for desktop
+    document.addEventListener('mousemove', (event) => {
+        const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+        const mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        targetCameraRotation.y = mouseX * CONFIG.cameraWobbleAmount;
+        targetCameraRotation.x = mouseY * CONFIG.cameraWobbleAmount;
+    });
+}
 
 // Lighting
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -126,21 +159,29 @@ class WaterBlob {
         this.timeSinceLastPlantSpawn = 0; // Track time instead of distance
         this.hasSpawnedNext = false; // Track if this blob has spawned the next one
 
-        scene.add(this.mesh);
+        // Generate path BEFORE adding to scene to avoid spawn flicker
         this.setNewPath();
+
+        // Position blob at path start immediately to prevent center-screen flash
+        if (this.path) {
+            const startPoint = this.path.getPointAt(0);
+            this.mesh.position.copy(startPoint);
+        }
+
+        scene.add(this.mesh);
     }
 
     update(delta) {
         this.time += delta;
         this.pathProgress += CONFIG.blobSpeed * delta;
 
-        // Jiggle effect - large amplitude for visible wobble
+        // Jiggle effect - large amplitude for visible wobble (scaled with blob size)
         const positions = this.mesh.geometry.attributes.position.array;
         for (let i = 0; i < positions.length; i += 3) {
             const offset = i / 3;
-            positions[i] = this.originalPositions[i] + Math.sin(this.time * 3 + offset) * 76.8;
-            positions[i + 1] = this.originalPositions[i + 1] + Math.cos(this.time * 4 + offset) * 76.8;
-            positions[i + 2] = this.originalPositions[i + 2] + Math.sin(this.time * 3.5 + offset) * 76.8;
+            positions[i] = this.originalPositions[i] + Math.sin(this.time * 3 + offset) * 115.2;
+            positions[i + 1] = this.originalPositions[i + 1] + Math.cos(this.time * 4 + offset) * 115.2;
+            positions[i + 2] = this.originalPositions[i + 2] + Math.sin(this.time * 3.5 + offset) * 115.2;
         }
         this.mesh.geometry.attributes.position.needsUpdate = true;
 
