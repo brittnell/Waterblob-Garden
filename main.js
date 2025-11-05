@@ -56,6 +56,16 @@ const pointLight2 = new THREE.PointLight(0x4488ff, 0.5, 12800); // 128x range (2
 pointLight2.position.set(-1280, -1280, 640); // 128x distance (2x from previous)
 scene.add(pointLight2);
 
+// Add bright key light for specular highlights on blobs
+const keyLight = new THREE.PointLight(0xffffff, 2.5, 10000);
+keyLight.position.set(500, 1000, 4500); // Above and slightly offset from camera view
+scene.add(keyLight);
+
+// Add rim light for edge highlights
+const rimLight = new THREE.PointLight(0xaaddff, 1.5, 10000);
+rimLight.position.set(-500, -800, 4500); // Opposite side for depth
+scene.add(rimLight);
+
 // Water blob with jiggly effect
 class WaterBlob {
     constructor() {
