@@ -67,9 +67,9 @@ function enableGyro() {
             const beta = event.beta || 0;  // X axis (front/back tilt: -180 to 180)
             const gamma = event.gamma || 0; // Y axis (left/right tilt: -90 to 90)
 
-            // Normalize and apply to camera rotation
-            targetCameraRotation.x = (beta / 180) * CONFIG.cameraWobbleAmount;
-            targetCameraRotation.y = (gamma / 90) * CONFIG.cameraWobbleAmount;
+            // Normalize and apply to camera rotation (2x sensitivity for mobile gyro)
+            targetCameraRotation.x = (beta / 180) * CONFIG.cameraWobbleAmount * 2;
+            targetCameraRotation.y = (gamma / 90) * CONFIG.cameraWobbleAmount * 2;
         }
     }, true);
 }
