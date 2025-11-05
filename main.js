@@ -425,12 +425,12 @@ class Plant {
         else if (age < this.growTime + this.stableTime) {
             this.mesh.scale.set(1, 1, 1);
         }
-        // Decay phase - scale down to 0 with smooth easing
+        // Decay phase - smooth LINEAR scale from 100% to 0%
         else if (age < this.totalLifespan) {
             const decayStart = this.growTime + this.stableTime;
             const decayProgress = (age - decayStart) / this.decayTime;
-            // Use easeOutCubic for smoother, more gradual fade (fast start, slow end)
-            const scale = 1 - this.easeOutCubic(decayProgress);
+            // Linear decay - no easing, smooth consistent fade
+            const scale = 1 - decayProgress;
             this.mesh.scale.set(scale, scale, scale);
         }
 
