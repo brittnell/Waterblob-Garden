@@ -97,10 +97,12 @@ class WaterBlob {
             vertexColors: true, // Enable vertex colors for watery gradient
             transparent: true,
             opacity: 0.75,
-            shininess: 120,
-            specular: 0xaaddff,
-            reflectivity: 0.8,
-            refractionRatio: 0.95
+            shininess: 150, // Increased for better highlights
+            specular: 0xffffff, // Pure white specular for crisp highlights
+            reflectivity: 0.9,
+            refractionRatio: 0.98,
+            emissive: 0x001133, // Very subtle deep blue glow
+            emissiveIntensity: 0.1
         });
 
         this.mesh = new THREE.Mesh(geometry, material);
@@ -126,6 +128,9 @@ class WaterBlob {
             positions[i + 2] = this.originalPositions[i + 2] + Math.sin(this.time * 3.5 + offset) * 76.8;
         }
         this.mesh.geometry.attributes.position.needsUpdate = true;
+
+        // CRITICAL: Recompute normals after deformation for proper 3D shading
+        this.mesh.geometry.computeVertexNormals();
 
         // Update position along path
         if (this.path) {
