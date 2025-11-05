@@ -3,14 +3,14 @@ import * as THREE from 'three';
 // Configuration
 const CONFIG = {
     backgroundColor: 0x000000,
-    blobSize: 102.4, // 128x larger than original (2x from previous)
+    blobSize: 204.8, // 256x larger than original (2x from previous)
     blobSpeed: 0.015,
     pathScale: 3200, // 128x larger (2x from previous)
-    plantSpawnInterval: 19.2, // 128x larger for spacing (2x from previous)
+    plantSpawnInterval: 24, // Reduced density by 25% to prevent flickering
     plantGrowTimeMin: 2500, // Minimum growth time with variation
     plantGrowTimeMax: 3500, // Maximum growth time with variation
-    plantStableTimeMin: 10000, // Minimum time at full scale (10 seconds)
-    plantStableTimeMax: 15000, // Maximum time at full scale (15 seconds)
+    plantStableTimeMin: 15000, // Minimum time at full scale (15 seconds)
+    plantStableTimeMax: 20000, // Maximum time at full scale (20 seconds)
     plantDecayTimeMin: 8000, // Minimum time to scale down to 0 with variation
     plantDecayTimeMax: 12000, // Maximum time to scale down to 0 with variation
     cameraWobbleAmount: 0.3,
@@ -92,9 +92,9 @@ class WaterBlob {
         const positions = this.mesh.geometry.attributes.position.array;
         for (let i = 0; i < positions.length; i += 3) {
             const offset = i / 3;
-            positions[i] = this.originalPositions[i] + Math.sin(this.time * 3 + offset) * 38.4;
-            positions[i + 1] = this.originalPositions[i + 1] + Math.cos(this.time * 4 + offset) * 38.4;
-            positions[i + 2] = this.originalPositions[i + 2] + Math.sin(this.time * 3.5 + offset) * 38.4;
+            positions[i] = this.originalPositions[i] + Math.sin(this.time * 3 + offset) * 76.8;
+            positions[i + 1] = this.originalPositions[i + 1] + Math.cos(this.time * 4 + offset) * 76.8;
+            positions[i + 2] = this.originalPositions[i + 2] + Math.sin(this.time * 3.5 + offset) * 76.8;
         }
         this.mesh.geometry.attributes.position.needsUpdate = true;
 
