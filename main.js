@@ -9,12 +9,12 @@ const CONFIG = {
     plantSpawnInterval: 24, // Reduced density by 25% to prevent flickering
     plantGrowTimeMin: 2500, // Minimum growth time with variation
     plantGrowTimeMax: 3500, // Maximum growth time with variation
-    plantStableTimeMin: 15000, // Minimum time at full scale (15 seconds)
-    plantStableTimeMax: 20000, // Maximum time at full scale (20 seconds)
-    plantDecayTimeMin: 10000, // Minimum time to scale down to 0 (10 seconds - SLOWER decay)
-    plantDecayTimeMax: 15000, // Maximum time to scale down to 0 (15 seconds - SLOWER decay)
+    plantStableTimeMin: 15000, // Minimum time at full scale (15 seconds) - HOLD at 100%
+    plantStableTimeMax: 20000, // Maximum time at full scale (20 seconds) - HOLD at 100%
+    plantDecayTimeMin: 8000, // Minimum time to scale down to 0 (8 seconds - SLOW decay)
+    plantDecayTimeMax: 10000, // Maximum time to scale down to 0 (10 seconds - SLOW decay)
     cameraWobbleAmount: 0.3,
-    maxPlants: 50 // Reduced to 25% of previous (200 -> 50)
+    maxPlants: 12 // Reduced to 25% of previous (50 -> 12)
 };
 
 // Scene setup
