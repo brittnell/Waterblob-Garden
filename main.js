@@ -13,7 +13,9 @@ const CONFIG = {
     plantStableTimeMax: 20000, // Maximum time at full scale (20 seconds) - HOLD at 100%
     plantDecayTimeMin: 8000, // Minimum time to scale down to 0 (8 seconds - SLOW decay)
     plantDecayTimeMax: 10000, // Maximum time to scale down to 0 (10 seconds - SLOW decay)
-    plantSpawnRandomness: 40, // Random offset range for plant spawn positions (spread out the trail)
+    plantSpawnRandomness: 100, // Random offset range for plant spawn positions (increased to reduce z-fighting)
+    plantMaxScaleMin: 0.8, // Minimum max scale (80% of full size)
+    plantMaxScaleMax: 1.0, // Maximum max scale (100% of full size)
     cameraWobbleAmount: 0.3
 };
 
@@ -196,7 +198,9 @@ const PLANT_TYPES = [
                         new THREE.Color(0xff9933),
                         i / numPetals
                     ),
-                    emissiveIntensity: 0.2
+                    emissiveIntensity: 0.2,
+                    transparent: true,
+                    opacity: 0.75
                 });
                 const petal = new THREE.Mesh(geometry, material);
                 petal.rotation.z = Math.PI / 2;
@@ -230,7 +234,9 @@ const PLANT_TYPES = [
                         new THREE.Color(0x9933ff),
                         i / numSegments
                     ),
-                    emissiveIntensity: 0.3
+                    emissiveIntensity: 0.3,
+                    transparent: true,
+                    opacity: 0.75
                 });
                 const segment = new THREE.Mesh(geometry, material);
                 segment.position.y = i * 76.8 + 38.4; // 192x larger (4x from previous)
@@ -407,6 +413,10 @@ class Plant {
         this.decayTime = CONFIG.plantDecayTimeMin +
             Math.random() * (CONFIG.plantDecayTimeMax - CONFIG.plantDecayTimeMin);
 
+        // Random max scale between 80-100% for variety
+        this.maxScale = CONFIG.plantMaxScaleMin +
+            Math.random() * (CONFIG.plantMaxScaleMax - CONFIG.plantMaxScaleMin);
+
         // Calculate total lifespan
         this.totalLifespan = this.growTime + this.stableTime + this.decayTime;
 
@@ -416,22 +426,22 @@ class Plant {
     update(time) {
         const age = Date.now() - this.birthTime;
 
-        // Growth phase - smooth cubic easing with varied duration
+        // Growth phase - smooth cubic easing with varied duration to random maxScale
         if (age < this.growTime) {
             const growProgress = age / this.growTime;
-            const scale = this.easeOutCubic(growProgress);
+            const scale = this.easeOutCubic(growProgress) * this.maxScale;
             this.mesh.scale.set(scale, scale, scale);
         }
-        // Stable phase - maintain full scale
+        // Stable phase - maintain maxScale (80-100%)
         else if (age < this.growTime + this.stableTime) {
-            this.mesh.scale.set(1, 1, 1);
+            this.mesh.scale.set(this.maxScale, this.maxScale, this.maxScale);
         }
-        // Decay phase - smooth LINEAR scale from 100% to 0%
+        // Decay phase - smooth LINEAR scale from maxScale to 0%
         else if (age < this.totalLifespan) {
             const decayStart = this.growTime + this.stableTime;
             const decayProgress = (age - decayStart) / this.decayTime;
             // Linear decay - no easing, smooth consistent fade
-            const scale = 1 - decayProgress;
+            const scale = this.maxScale * (1 - decayProgress);
             this.mesh.scale.set(scale, scale, scale);
         }
 
