@@ -205,24 +205,24 @@ class WaterBlob {
 const PLANT_TYPES = [
     {
         name: 'Spiral Bloom',
-        colors: { base: 0xff4488, tip: 0xff8844 }, // Orange/Pink
+        colors: { base: 0x00ff00, tip: 0xff6b6b }, // Neon Green/Coral
         build: () => {
             const group = new THREE.Group();
             const numPetals = 8;
             for (let i = 0; i < numPetals; i++) {
                 const angle = (i / numPetals) * Math.PI * 2;
                 const geometry = new THREE.ConeGeometry(28.8, 153.6, 8); // 192x larger (4x from previous)
-                // Enhanced gradient from hot pink to bright orange
+                // Vibrant gradient from neon green to coral
                 const material = new THREE.MeshPhongMaterial({
                     color: new THREE.Color().lerpColors(
-                        new THREE.Color(0xff1166), // Brighter hot pink
-                        new THREE.Color(0xff9933), // Brighter orange
+                        new THREE.Color(0x00ff00), // Neon green
+                        new THREE.Color(0xff6b6b), // Coral
                         i / numPetals
                     ),
                     shininess: 60,
                     emissive: new THREE.Color().lerpColors(
-                        new THREE.Color(0xff1166),
-                        new THREE.Color(0xff9933),
+                        new THREE.Color(0x00ff00),
+                        new THREE.Color(0xff6b6b),
                         i / numPetals
                     ),
                     emissiveIntensity: 0.2,
@@ -241,24 +241,24 @@ const PLANT_TYPES = [
     },
     {
         name: 'Crystal Frond',
-        colors: { base: 0x00ffff, tip: 0x8844ff }, // Cyan/Violet
+        colors: { base: 0xccff00, tip: 0x1a4d2e }, // Lime Green/Dark Forest
         build: () => {
             const group = new THREE.Group();
             const numSegments = 5;
             for (let i = 0; i < numSegments; i++) {
                 const size = 57.6 - (i * 7.68); // 192x larger (4x from previous)
                 const geometry = new THREE.SphereGeometry(size, 8, 8);
-                // Enhanced gradient from bright cyan to deep violet
+                // Gradient from bright lime green to dark forest green
                 const material = new THREE.MeshPhongMaterial({
                     color: new THREE.Color().lerpColors(
-                        new THREE.Color(0x00ffff), // Bright cyan
-                        new THREE.Color(0x9933ff), // Deeper violet
+                        new THREE.Color(0xccff00), // Lime green
+                        new THREE.Color(0x1a4d2e), // Dark forest green
                         i / numSegments
                     ),
                     shininess: 80,
                     emissive: new THREE.Color().lerpColors(
-                        new THREE.Color(0x00ffff),
-                        new THREE.Color(0x9933ff),
+                        new THREE.Color(0xccff00),
+                        new THREE.Color(0x1a4d2e),
                         i / numSegments
                     ),
                     emissiveIntensity: 0.3,
@@ -275,27 +275,27 @@ const PLANT_TYPES = [
     },
     {
         name: 'Bubble Cluster',
-        colors: { base: 0xff00ff, tip: 0x00ffaa }, // Magenta/Turquoise
+        colors: { base: 0x9bc400, tip: 0x6b5b3e }, // Sage Green/Olive Brown
         build: () => {
             const group = new THREE.Group();
             const numBubbles = 12;
             for (let i = 0; i < numBubbles; i++) {
                 const radius = 19.2 + Math.random() * 28.8; // 192x larger (4x from previous)
                 const geometry = new THREE.SphereGeometry(radius, 16, 16);
-                // Enhanced gradient from bright magenta to turquoise
+                // Gradient from sage green to olive brown
                 const gradientPos = Math.random();
                 const material = new THREE.MeshPhongMaterial({
                     color: new THREE.Color().lerpColors(
-                        new THREE.Color(0xff00ff), // Bright magenta
-                        new THREE.Color(0x00ffdd), // Bright turquoise
+                        new THREE.Color(0x9bc400), // Sage green
+                        new THREE.Color(0x6b5b3e), // Olive brown
                         gradientPos
                     ),
                     transparent: true,
                     opacity: 0.75,
                     shininess: 100,
                     emissive: new THREE.Color().lerpColors(
-                        new THREE.Color(0xff00ff),
-                        new THREE.Color(0x00ffdd),
+                        new THREE.Color(0x9bc400),
+                        new THREE.Color(0x6b5b3e),
                         gradientPos
                     ),
                     emissiveIntensity: 0.25
@@ -329,11 +329,11 @@ const PLANT_TYPES = [
                 8,
                 false
             );
-            // Enhanced gradient along the tendril from orange to hot pink
+            // Gradient along the tendril from yellow-green to chocolate brown
             const material = new THREE.MeshPhongMaterial({
-                color: 0xff6633, // Orange base
+                color: 0xb5e550, // Yellow-green base
                 shininess: 70,
-                emissive: 0xff0066, // Hot pink emissive
+                emissive: 0x5c4033, // Chocolate brown emissive
                 emissiveIntensity: 0.4,
                 transparent: true,
                 opacity: 0.75,
@@ -341,14 +341,14 @@ const PLANT_TYPES = [
             });
             const tendril = new THREE.Mesh(geometry, material);
 
-            // Add gradient effect by varying emissive along the curve
+            // Add gradient effect by varying color along the curve
             const colors = [];
             const positionAttribute = geometry.attributes.position;
             for (let i = 0; i < positionAttribute.count; i++) {
                 const t = (i / positionAttribute.count);
                 const color = new THREE.Color().lerpColors(
-                    new THREE.Color(0xff9900), // Bright orange start
-                    new THREE.Color(0xff0066), // Hot pink end
+                    new THREE.Color(0xb5e550), // Yellow-green start
+                    new THREE.Color(0x5c4033), // Chocolate brown end
                     t
                 );
                 colors.push(color.r, color.g, color.b);
@@ -362,14 +362,14 @@ const PLANT_TYPES = [
     },
     {
         name: 'Starburst Pod',
-        colors: { base: 0xffdd00, tip: 0xff00dd }, // Aquamarine/Magenta gradient
+        colors: { base: 0x39ff14, tip: 0x3d2817 }, // Neon Green/Dark Brown gradient
         build: () => {
             const group = new THREE.Group();
             const centerGeometry = new THREE.SphereGeometry(48.0, 16, 16); // 192x larger (4x from previous)
             const centerMaterial = new THREE.MeshPhongMaterial({
-                color: 0x7FFFD4, // Changed to aquamarine #7FFFD4
+                color: 0x39ff14, // Bright neon green
                 shininess: 90,
-                emissive: 0x7FFFD4,
+                emissive: 0x39ff14,
                 emissiveIntensity: 0.3,
                 transparent: true,
                 opacity: 0.75
@@ -381,18 +381,18 @@ const PLANT_TYPES = [
             const numSpikes = 16;
             for (let i = 0; i < numSpikes; i++) {
                 const geometry = new THREE.CylinderGeometry(3.84, 15.36, 115.2, 8); // 192x larger (4x from previous)
-                // Enhanced gradient from aquamarine to bright magenta
+                // Gradient from neon green to dark brown
                 const gradientPos = Math.random();
                 const material = new THREE.MeshPhongMaterial({
                     color: new THREE.Color().lerpColors(
-                        new THREE.Color(0x7FFFD4), // Aquamarine
-                        new THREE.Color(0xff00ff), // Bright magenta
+                        new THREE.Color(0x39ff14), // Neon green
+                        new THREE.Color(0x3d2817), // Dark brown
                         gradientPos
                     ),
                     shininess: 80,
                     emissive: new THREE.Color().lerpColors(
-                        new THREE.Color(0x7FFFD4),
-                        new THREE.Color(0xff00ff),
+                        new THREE.Color(0x39ff14),
+                        new THREE.Color(0x3d2817),
                         gradientPos
                     ),
                     emissiveIntensity: 0.25,
