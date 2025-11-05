@@ -6,7 +6,7 @@ const CONFIG = {
     blobSize: 204.8, // 256x larger than original (2x from previous)
     blobSpeed: 0.015,
     pathScale: 3200, // 128x larger (2x from previous)
-    plantSpawnInterval: 24, // Reduced density by 25% to prevent flickering
+    plantSpawnRate: 2, // Number of plants to spawn per second (time-based)
     plantGrowTimeMin: 5000, // Minimum growth time (5 seconds with 20% variation)
     plantGrowTimeMax: 8000, // Maximum growth time (8 seconds with 20% variation)
     plantStableTimeMin: 15000, // Minimum time at full scale (15 seconds) - HOLD at 100%
@@ -77,7 +77,7 @@ class WaterBlob {
         this.mesh = new THREE.Mesh(geometry, material);
         this.time = 0;
         this.pathProgress = 0;
-        this.lastPlantSpawn = 0;
+        this.timeSinceLastPlantSpawn = 0; // Track time instead of distance
         this.hasSpawnedNext = false; // Track if this blob has spawned the next one
 
         scene.add(this.mesh);
@@ -103,10 +103,11 @@ class WaterBlob {
             const point = this.path.getPointAt(this.pathProgress % 1);
             this.mesh.position.copy(point);
 
-            // Spawn plants along the trail
-            const distanceTraveled = this.pathProgress * this.path.getLength();
-            if (distanceTraveled - this.lastPlantSpawn > CONFIG.plantSpawnInterval) {
-                this.lastPlantSpawn = distanceTraveled;
+            // Spawn plants based on time (plants per second)
+            this.timeSinceLastPlantSpawn += delta;
+            const spawnInterval = 1 / CONFIG.plantSpawnRate; // Time between spawns
+            if (this.timeSinceLastPlantSpawn >= spawnInterval) {
+                this.timeSinceLastPlantSpawn -= spawnInterval;
                 spawnPlant(this.mesh.position.clone());
             }
 
@@ -424,11 +425,12 @@ class Plant {
         else if (age < this.growTime + this.stableTime) {
             this.mesh.scale.set(1, 1, 1);
         }
-        // Decay phase - scale down to 0
+        // Decay phase - scale down to 0 with smooth easing
         else if (age < this.totalLifespan) {
             const decayStart = this.growTime + this.stableTime;
             const decayProgress = (age - decayStart) / this.decayTime;
-            const scale = 1 - this.easeInCubic(decayProgress);
+            // Use easeOutCubic for smoother, more gradual fade (fast start, slow end)
+            const scale = 1 - this.easeOutCubic(decayProgress);
             this.mesh.scale.set(scale, scale, scale);
         }
 
