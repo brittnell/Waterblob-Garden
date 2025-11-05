@@ -16,7 +16,7 @@ const CONFIG = {
     plantSpawnRandomness: 400, // Random offset range for plant spawn positions (±100 units)
     plantMaxScaleMin: 0.8, // Minimum max scale (80% of full size)
     plantMaxScaleMax: 1.0, // Maximum max scale (100% of full size)
-    cameraWobbleAmount: 0.3
+    cameraWobbleAmount: 0.1 // Reduced camera rotation with mouse (was 0.3)
 };
 
 // Scene setup
@@ -66,6 +66,11 @@ const rimLight = new THREE.PointLight(0xaaddff, 1.5, 10000);
 rimLight.position.set(-500, -800, 4500); // Opposite side for depth
 scene.add(rimLight);
 
+// Add directional light from camera direction for strong specular highlights
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+directionalLight.position.set(0, 500, 5000); // From above-front
+scene.add(directionalLight);
+
 // Water blob with jiggly effect
 class WaterBlob {
     constructor() {
@@ -106,13 +111,13 @@ class WaterBlob {
         const material = new THREE.MeshPhongMaterial({
             vertexColors: true, // Enable vertex colors for watery gradient
             transparent: true,
-            opacity: 0.75,
-            shininess: 150, // Increased for better highlights
+            opacity: 0.85, // Increased opacity for more visible highlights
+            shininess: 300, // Much higher for tighter, brighter highlights
             specular: 0xffffff, // Pure white specular for crisp highlights
-            reflectivity: 0.9,
+            reflectivity: 0.95,
             refractionRatio: 0.98,
-            emissive: 0x001133, // Very subtle deep blue glow
-            emissiveIntensity: 0.1
+            emissive: 0x002244, // Slightly stronger blue glow
+            emissiveIntensity: 0.15
         });
 
         this.mesh = new THREE.Mesh(geometry, material);
